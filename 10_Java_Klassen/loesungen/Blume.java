@@ -33,7 +33,7 @@ public class Blume {
 		// Stängel
 		g.setColor(Color.GREEN);
 		g.fillRect(x + 29, y + 40, 3, 1000);
-		// Blütenblätter
+		// Blütenblätter zeichnen, solange sie nicht verwelkt ist
 		if (!verwelkt) {
 			g.setColor(farbe);
 			g.fillOval(x + 20, y,      20, 20);
