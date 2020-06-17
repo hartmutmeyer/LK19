@@ -1,58 +1,52 @@
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
 
 public class Blume {
-	private int x = 0;
-	private int y = 0;
-	private static int anzahlBlumen;
-	private Color farbeblatt = Color.RED;
-	private Color farbehonig = Color.YELLOW;
-	private Color farbestange = Color.GREEN;
-	private int zeitZumVerbluehen = 200;
-
-	public Blume(int xpos, int ypos) {
-		x = xpos;
-		y = ypos;
-		switch (anzahlBlumen++ % 3) {
+	public int x;
+	public int y;
+	public Color farbe;
+	public static int anzahlBlumen;
+	public boolean verwelkt = false;
+	public int verwelktZaehler;
+	
+	public Blume(int x, int y) {
+		this.x = x;
+		this.y = y;
+		switch (anzahlBlumen % 3) {
 		case 0:
-			farbeblatt = Color.RED;
+			this.farbe = Color.RED;
 			break;
 		case 1:
-			farbeblatt = Color.BLUE;
+			this.farbe = Color.BLUE;
 			break;
 		case 2:
-			farbeblatt = Color.CYAN;
+			this.farbe = Color.CYAN;
+			break;
 		}
+		anzahlBlumen++;
 	}
-
+	
 	public void zeichnen(Graphics g) {
-		if (y >= 100) {
-			g.setColor(farbestange);
-			g.fillRect(x + 29, y + 60, 3, 1000);
-			g.setColor(farbehonig);
-			g.fillOval(x + 20, y + 20, 20, 20);
-			g.setColor(farbeblatt);
-			g.fillOval(x + 20, y, 20, 20);
-			g.fillOval(x, y + 20, 20, 20);
+		// Blütenstempel
+		g.setColor(Color.YELLOW);
+		g.fillOval(x + 20, y + 20, 20, 20);
+		// Stängel
+		g.setColor(Color.GREEN);
+		g.fillRect(x + 29, y + 40, 3, 1000);
+		// Blütenblätter
+		if (!verwelkt) {
+			g.setColor(farbe);
+			g.fillOval(x + 20, y,      20, 20);
 			g.fillOval(x + 40, y + 20, 20, 20);
 			g.fillOval(x + 20, y + 40, 20, 20);
+			g.fillOval(x     , y + 20, 20, 20);
+		}
+		// Blume soll wachsen: Bei jedem Aufruf von zeichnen() um ein Pixel
+		if (y > 100) {
 			y--;
-		} else {
-			if (zeitZumVerbluehen > 0) {
-				g.setColor(farbestange);
-				g.fillRect(x + 29, y + 40, 3, 1000);
-				g.setColor(farbehonig);
-				g.fillOval(x + 20, y + 20, 20, 20);
-				g.setColor(farbeblatt);
-				g.fillOval(x + 20, y, 20, 20);
-				g.fillOval(x, y + 20, 20, 20);
-				g.fillOval(x + 40, y + 20, 20, 20);
-				g.fillOval(x + 20, y + 40, 20, 20);
-				zeitZumVerbluehen--;
-			} else {
-				g.setColor(farbestange);
-				g.fillRect(x + 29, y + 40, 3, 1000);
-				g.setColor(farbehonig);
-				g.fillOval(x + 20, y + 20, 20, 20);
+		} else { // 2 Sekunden nach Erreichen der Maximalen Höhe verwelken!
+			if (verwelktZaehler++ > 200) {
+				verwelkt = true;
 			}
 		}
 	}
