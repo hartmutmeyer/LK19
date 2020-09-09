@@ -6,15 +6,15 @@ import javax.swing.Timer;
 
 import hilfe.*;
 
-public class Main extends HJFrame {
+public class MaennchenAnwendung extends HJFrame {
 	// globale Variablen
 	private static final int WIDTH = 800;
 	private static final int HEIGHT = 200;
 	private static final Color BACKGROUND = Color.WHITE;
 	private static final Color FOREGROUND = Color.BLACK;
 	private Maennchen m1;
-	
-	public Main(final String title) {
+
+	public MaennchenAnwendung(final String title) {
 		super(WIDTH, HEIGHT, BACKGROUND, FOREGROUND, title);
 		// eigene Initialisierung
 		Timer timer = new Timer(250, this);
@@ -33,7 +33,7 @@ public class Main extends HJFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Main anwendung = new Main("Main");
+					MaennchenAnwendung anwendung = new MaennchenAnwendung("MaennchenAnwendung");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
