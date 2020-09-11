@@ -30,7 +30,7 @@ public class Raupe {
 	}
 
 	public void bewegen() {
-		if ((x += v_x) == 500) {
+		if ((x += v_x) >= 500) {
 			x = -100;
 		}
 	}
