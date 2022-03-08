@@ -24,7 +24,6 @@ class ClientThreadOhneZustandsvariable extends Thread {
 			while ((zeichen = inNet.read()) != '$') {
 				name += (char) zeichen;
 			}
-// Variante "normal" ANFANG
 			URL url = getClass().getResource("rekord.txt");
 			if (url == null) {
 				System.out.println("Fehler beim Lesen: Datei rekord.txt existiert nicht.");
@@ -32,10 +31,6 @@ class ClientThreadOhneZustandsvariable extends Thread {
 			}
 			try (InputStream is = new FileInputStream(url.getFile());
 					InputStreamReader inFile = new InputStreamReader(is, "UTF-8")) {
-// Variante "normal" ENDE
-// Variante JAR ANFANG
-//			try	(FileReader inFile = new FileReader("rekord.txt")) {
-// Variante JAR ENDE
 				String text = "";
 				while ((zeichen = inFile.read()) != '$') {
 					text += (char) zeichen;
@@ -66,14 +61,8 @@ class ClientThreadOhneZustandsvariable extends Thread {
 				text += "Das ist die neue Bestzeit!$";
 
 				synchronized (monitor) {
-
-// Variante "normal" ANFANG
 					try (OutputStream is = new FileOutputStream(url.getFile());
 							OutputStreamWriter outFile = new OutputStreamWriter(is, "UTF-8")) {
-// Variante "normal" ENDE
-// Variante JAR ANFANG
-//					try (FileWriter outFile = new FileWriter("rekord.txt", false)) {
-// Variante JAR ENDE
 						outFile.write("" + zeit + "$" + name);
 						outFile.flush();
 					} catch (IOException e) {
@@ -82,18 +71,16 @@ class ClientThreadOhneZustandsvariable extends Thread {
 					}
 				}
 			} else {
-					text = "%Du hast die Aufgaben in " + zeit
-							+ " Sekunden gelöst.\n";
-					text += "Die aktuelle Bestzeit von " + halterDerBisherigenBestzeit
-							+ " beträgt " + bisherigeBestzeit + " Sekunden.$";
-				}
+				text = "%Du hast die Aufgaben in " + zeit + " Sekunden gelöst.\n";
+				text += "Die aktuelle Bestzeit von " + halterDerBisherigenBestzeit + " beträgt " + bisherigeBestzeit
+						+ " Sekunden.$";
+			}
 			System.out.println(text);
 			outNet.write(text);
 			outNet.flush();
 			sock.close();
 		} catch (Exception e) {
-			System.out.println("Exception vom Client erhalten: "
-					+ e.getMessage());
+			System.out.println("Exception vom Client erhalten: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}

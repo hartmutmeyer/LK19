@@ -59,6 +59,7 @@ class ClientThread extends Thread {
 		while ((zeichen = inNet.read()) != '$') {
 			name += (char) zeichen;
 		}
+		System.out.println("ClientThread: Name empfangen: " + name);
 		anfangszeit = System.currentTimeMillis();
 		zustand = NEUE_AUFGABE_BESTIMMEN;
 	}
@@ -74,6 +75,7 @@ class ClientThread extends Thread {
 	void aufgabeStellen(OutputStreamWriter outNet) throws IOException {
 		outNet.write(aufgabe);
 		outNet.flush();
+		System.out.println("ClientThread: Aufgabe gestellt: " + aufgabe);
 		zustand = AUF_ANTWORT_WARTEN;
 	}
 
@@ -111,10 +113,11 @@ class ClientThread extends Thread {
 		long endzeit = System.currentTimeMillis();
 		double zeit = endzeit - anfangszeit;
 		zeit = zeit / 1000;
-		double bisherigeBestzeit;
-		String halterDerBisherigenBestzeit;
+		double bisherigeBestzeit = 0.0;
+		String halterDerBisherigenBestzeit = "";
 		String text = "";
 		int zeichen;
+		boolean highscoreFileExists = false;
 				
 		synchronized (monitor) {
 			URL url = getClass().getResource("rekord.txt");
@@ -128,32 +131,37 @@ class ClientThread extends Thread {
 					text += (char) zeichen;
 				}
 				bisherigeBestzeit = Double.parseDouble(text);
-				halterDerBisherigenBestzeit = "";
 				while ((zeichen = inFile.read()) != -1) {
 					halterDerBisherigenBestzeit += (char) zeichen;
 				}
-
-				if (zeit < bisherigeBestzeit) {
-					bisherigeBestzeit = zeit;
-					halterDerBisherigenBestzeit = name;
-					text = "%Gratuliere " + name + "! Du hast nur " + zeit + " Sekunden gebraucht.\n";
-					text += "Das ist die neue Bestzeit!$";
-					try (OutputStream os = new FileOutputStream(url.getFile());
-							OutputStreamWriter outFile = new OutputStreamWriter(os, "UTF-8")) {
-						outFile.write(zeit + "$" + name);
-						outFile.flush();
-					} catch (IOException e) {
-						System.out.println("Fehler beim Schreiben der Highscore-Datei:" + e.getMessage());
-						e.printStackTrace();
-					}
-				} else {
-					text = "%Du hast die Aufgaben in " + zeit + " Sekunden gelöst.\n";
-					text += "Die aktuelle Bestzeit von " + halterDerBisherigenBestzeit + " beträgt " + bisherigeBestzeit
-							+ " Sekunden.$";
+				if (!text.isEmpty() && !halterDerBisherigenBestzeit.isEmpty()) {
+					highscoreFileExists = true;
 				}
 			} catch (IOException e) {
 				System.out.println("Fehler beim Lesen der Highscore-Datei:" + e.getMessage());
 				e.printStackTrace();
+			}
+
+			if (zeit < bisherigeBestzeit) {
+				bisherigeBestzeit = zeit;
+				halterDerBisherigenBestzeit = name;
+				text = "%Gratuliere " + name + "! Du hast nur " + zeit + " Sekunden gebraucht.\n";
+				text += "Das ist die neue Bestzeit!$";
+				try (OutputStream os = new FileOutputStream(url.getFile());
+						OutputStreamWriter outFile = new OutputStreamWriter(os, "UTF-8")) {
+					outFile.write(zeit + "$" + name);
+					outFile.flush();
+				} catch (IOException e) {
+					System.out.println("Fehler beim Schreiben der Highscore-Datei:" + e.getMessage());
+					e.printStackTrace();
+				}
+			} else {
+				text = "%Du hast die Aufgaben in " + zeit + " Sekunden gelöst.\n";
+				if (highscoreFileExists) {
+
+					text += "Die aktuelle Bestzeit von " + halterDerBisherigenBestzeit + " beträgt " + bisherigeBestzeit
+							+ " Sekunden.$";
+				}
 			}
 		}
 		System.out.println(text);
